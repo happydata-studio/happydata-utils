@@ -5,5 +5,5 @@ export * from "./date/date";
 export * from "./time/secondsToString";
 export * from "./llm/llm";
 export * from "./random/random";
-export * from "./ordinal/ordinal";
+export * from "./numbers/ordinal";
 export * from "./numbers/parseNumber";

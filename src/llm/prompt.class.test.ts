@@ -22,7 +22,7 @@ describe('Prompt', () => {
 
   it('should render content with variables', () => {
     const prompt = new Prompt('Hello, {name}!', 'user');
-    const renderedPrompt = prompt.render({ name: 'Alice' });
+    const renderedPrompt = prompt.variables({ name: 'Alice' });
     expect(renderedPrompt.content).toBe('Hello, Alice!');
     expect(renderedPrompt.role).toBe('user');
     expect(renderedPrompt.meta).toEqual({});

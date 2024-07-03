@@ -10,5 +10,11 @@ describe('Date Utils', () => {
     expect(dateFormat(date, 'base')).toBe("Jun 28, 2024");
     expect(dateFormat(date, 'large')).toBe("Friday, June 28, 2024");
   });
+  test('Format Date with ', () => {
+    expect(dateFormat(date, 'tiny', "en-GB")).toBe("28/06");
+    expect(dateFormat(date, 'small', "en-GB")).toBe("28/06/2024");
+    expect(dateFormat(date, 'base', "en-GB")).toBe("28 Jun 2024");
+    expect(dateFormat(date, 'large', "en-GB")).toBe("Friday 28 June 2024");
+  });
 });
 
