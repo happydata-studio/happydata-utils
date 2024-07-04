@@ -71,6 +71,13 @@ describe('Redactor', () => {
       expect(redacted).toMatch(/Int\. Phone: \+\d{1,4} \d{3}-\d{7}/);
     });
 
+    it('should redact international phone numbers MULTIPLE TIMES', () => {
+      const input = 'Int. Phone: +1 123-456-7890 and again Int. Phone: +1 123-456-7891';
+      const redacted = redactor.redact(input);
+      expect(redacted).not.toContain('+1 123-456-7890');
+      expect(redacted).toMatch(/Int\. Phone: \+\d{1,4} \d{3}-\d{7}/);
+    });
+
     it('should redact multiple types of sensitive data in a single text', () => {
       const input = 'Phone: 123-456-7890, Email: test@example.com, SSN: 123-45-6789';
       const redacted = redactor.redact(input);

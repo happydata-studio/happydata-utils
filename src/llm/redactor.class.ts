@@ -38,12 +38,26 @@ export class Redactor {
     return this.text;
   }
 
+  /**
+   * Refills (rehydrates) any Mock PII with original PII
+   * This function can take any string, find the mock PII and replace
+   * it with the original PII.
+   * @param text
+   * @returns string
+   */
   public refill(text: string): string {
     this.redactions.forEach((value, key) => {
       text = text.replace(key, value);
     });
     return text;
   }
+
+  /**
+   * Redacting Text
+   * Identifies any matches and replaces them with the corresponding mock Personally Identifiable Information (PII) from the generator.
+   * @param match
+   * @returns string;
+   */
 
   private redactText(match: string): string {
     let placeholder = "";
@@ -72,6 +86,12 @@ export class Redactor {
 
     return placeholder;
   }
+
+  /**
+   * Generators
+   * Functions to generate mock PII data including
+   * iban, passports, emails, addresses, ssn, drivers license, etc.
+   */
 
   public generators = {
     // Generate a random IBAN Number

@@ -6,12 +6,12 @@ Happy Data Studio Utils offers a wide range of functions to streamline your work
 
 ---
 
-# LLM Tools
+# OpenAI Utils
 
 Tools and functions helpful while interacting with an Large Language Model like OpenAI compatable APIs
 
 
-## Prompt.class
+## Prompt
 
 The `Prompt` class provides a straightforward and flexible way to define prompt messages for interaction with OpenAI. This class, along with its derivatives `SystemPrompt`, `AssistantPrompt`, and `UserPrompt`, allows you to construct a variety of prompts, from simple messages to complex multi-line instructions. With built-in support for variables, you can dynamically tailor prompts to fit specific contexts. Whether you're crafting a basic query or a detailed, rule-based prompt, the `Prompt` class streamlines the process, making it easy to send structured messages to OpenAI for chat completions.
 
@@ -126,29 +126,28 @@ console.log(stringToColor("bob")) // #a57e27
 
 ## Extract JSON
 
-Sometimes LLMs output JSON wrapped with intro and outro text. This function reliably extracts JSON objects or array from an string of text.
+Extracting JSON from text that includes additional intro and outro content can be challenging. The `extractJSON` function simplifies this process, reliably extracting JSON objects or arrays from a string, ensuring you can work with clean data.
 
 ```typescript
 import { extractJSON } from "happydata-utils";
 
-const testString = `Here's some json { "name": "Bob" } \n do you like it?`
-console.log(extractJSON(testString)); // { "name": "Bob" }
+const testString = `Here's some JSON: { "name": "Bob" } \n Do you like it?`;
+console.log(extractJSON(testString)); // Output: { "name": "Bob" }
 
-const arrayTest = `Here's some json [{ "name": "Bob" },{ "name": "Sally" }] \n do you like it?`
-
-console.log(extractJSON(arrayTest, "array")); // [{ "name": "Bob" },{ "name": "Sally" }]
+const arrayTest = `Here's some JSON: [{ "name": "Bob" }, { "name": "Sally" }] \n Do you like it?`;
+console.log(extractJSON(arrayTest, "array")); // Output: [{ "name": "Bob" }, { "name": "Sally" }]
 ```
 
-## Extract URLS
+## Extract URLs
 
-Extract all urls into an array.
+Easily extract all URLs from a given string and return them as an array using the `extractUrls` function. This utility simplifies the process of identifying and isolating web addresses embedded within text.
 
 ```typescript
 import { extractUrls } from "happydata-utils";
 
 const testString = `Want some links? https://google.com http://home.com`;
 
-console.log(extractURLS(testString)); // [ "https://google.com", "http://home.com" ]
+console.log(extractUrls(testString)); // Output: [ "https://google.com", "http://home.com" ]
 ```
 
 ## toCase
@@ -177,8 +176,6 @@ console.log(trainCase);         // Output: "Example-String"
 console.log(dotCase);           // Output: "example.string"
 console.log(pascalCase);        // Output: "ExampleString"
 console.log(camelCase);         // Output: "exampleString"
-
-
 ```
 
 # Random Generation
@@ -366,6 +363,64 @@ import { copyToClipboard } from "happydata-utils";
 
 const str = `I've been copied! ${new Date().toJSON()}`;
 const copied = copyToClipboard(str); // Returns true if successful, false otherwise
+```
+
+# Additional External Resources for LLM Interactions
+
+### Zod
+Zod and ZodToJSONSchema provide a powerful combination for defining the exact JSON structure you want to receive from a Language Learning Model (LLM). By describing your desired results as a Zod schema and converting it to a JSON Schema, you can effectively communicate the required format to the LLM, ensuring accurate and structured responses.
+
+- [Zod](https://www.npmjs.com/package/zod) - TypeScript-first schema validation with static type inference.
+- [ZodToJSONSchema](https://www.npmjs.com/package/zod-to-json-schema) - Convert Zod schemas to JSON Schema.
+- [OpenAI](https://www.npmjs.com/package/openai) - OpenAI Rest wrapper
+
+Using these tools together streamlines the process of defining and validating JSON structures, enhancing the reliability and precision of your LLM interactions.
+
+```typescript
+import { extractJSON, SystemPrompt, UserPrompt } from "happydata-utils";
+import z from "zod";
+import OpenAI from "openai";
+import zodToJsonSchema from "zod-to-json-schema";
+
+const openai = new OpenAI({
+  apiKey: "sk-444..."
+})
+
+// Create the OutputSchema
+const OutputSchema = z.object({
+  title: z.string().max(50).describe("The Title of the Book"),
+  summary: z.string().max(600).describe("Summary of the book"),
+  chapters: z.array(z.object({
+      title: z.string().describe("Title of the chapter"),
+      summary: z.string().max(100).describe("Short summary of the chapter")
+  })).describe("Chapters of the Book").max(5)
+})
+
+// Extract a type from the Output Schema
+type TOutput = z.infer<typeof OutputSchema>;
+
+// Extract a stringified JSONSchema from the output
+const OutputJSONSchema = JSON.stringify(zodToJsonSchema(OutputSchema));
+
+const messages = [
+  new SystemPrompt([
+    `You are a Book Idea Generator`,
+    `You are creative, whity and helpful`,
+    `You generate brilliant and creative title, summary and chapter summaries.`,
+    `You will be given a topic, and you will use the provided schema to understand the data required, and output format.`,
+    `JSON Schema for the output: ${OutputJSONSchema}`
+  ]),
+  new UserPrompt("Topic: Teaching the world to skip, feel like a kid again")
+]
+const answer = await openai.chat.completions.create({
+  model: "gpt-3.5-turbo",
+  messages,
+  response_format: { "type": "json_object" }
+})
+
+const bookStructure:TOutput = extractJSON(answer.choices[0].message.content || "") as TOutput;
+console.log(bookStructure);
+
 ```
 
 ## License

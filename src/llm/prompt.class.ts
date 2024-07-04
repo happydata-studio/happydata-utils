@@ -73,3 +73,4 @@ export class AssistantPrompt extends Prompt {
     super(content, "assistant", meta); // Call the parent constructor with "assistant" role
   }
 }
+
