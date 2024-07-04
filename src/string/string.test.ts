@@ -1,7 +1,7 @@
 import {
   extractJSON,
   toCase
- } from './string';
+ } from './_string';
 
 
 
