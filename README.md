@@ -13,8 +13,7 @@ Tools and functions helpful while interacting with an Large Language Model like 
 
 ## Prompt.class
 
-Prompt is an easy to use class for defining a prompt message to send to OpenAI.
-
+The `Prompt` class provides a straightforward and flexible way to define prompt messages for interaction with OpenAI. This class, along with its derivatives `SystemPrompt`, `AssistantPrompt`, and `UserPrompt`, allows you to construct a variety of prompts, from simple messages to complex multi-line instructions. With built-in support for variables, you can dynamically tailor prompts to fit specific contexts. Whether you're crafting a basic query or a detailed, rule-based prompt, the `Prompt` class streamlines the process, making it easy to send structured messages to OpenAI for chat completions.
 
 ```js
 

@@ -1,7 +1,6 @@
-import { secondsToString } from "./time/secondsToString";
-
-
-console.log(secondsToString(12332)); // 3h 25m 32s
-console.log(secondsToString(105)); // 3h 25m 32s
-console.log(secondsToString(2030560)); // 3h 25m 32s
-console.log(secondsToString(400)); // 3h 25m 32s
+import { stringToColor } from './index';
+console.log(stringToColor("sameUserName")) //
+console.log(stringToColor("sameUserName")) //
+console.log(stringToColor("sally")) //
+console.log(stringToColor("frank")) //
+console.log(stringToColor("bob")) //
