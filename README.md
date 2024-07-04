@@ -46,7 +46,7 @@ let res = await openai.chat.completion.create({
 ```
 
 ## Redactor
-Redact PII with Mock PII, allowing you to safely send sensitive data to a Large Language Model (LLM). Once the data has been processed, you can then rehydrate the PII when the response comes back from the LLM.
+Redact PII with Mock PII, tries to avoid sending sensitive data to a Large Language Model (LLM). Once the data has been processed, you can then rehydrate the PII when the response comes back from the LLM.
 
 Redactor will user Regular Expressions to TRY and find the following: Phone number, email, address, social security number, license, credit card, passport, International Bank Account Number, international phone number.
 
