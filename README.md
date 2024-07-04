@@ -46,30 +46,35 @@ let res = await openai.chat.completion.create({
 ```
 
 ## Redactor
-Redact PII with Mock PII, so you can send data to an LLM, and then rehydrate the PII when the response comes back from the LLM.
+Redact PII with Mock PII, allowing you to safely send sensitive data to a Large Language Model (LLM). Once the data has been processed, you can then rehydrate the PII when the response comes back from the LLM.
+
+Redactor will user Regular Expressions to TRY and find the following: Phone number, email, address, social security number, license, credit card, passport, International Bank Account Number, international phone number.
+
+**Note: PII redaction is NOT guaranteed. USE AT YOUR OWN RISK**
 
 ```typescript
 import { redactor } from "happydata-utils";
 const redactor = new Redactor();
-const piiString = "My name is Frank, my email is frank@frank.com and my phone is 324-324-4456";
+const piiString = "Hi there my email is frank@frank.com and my phone is 324-324-4456";
 
 // Swap PII for Mock PII
-const redactedString = redactor.redact(piiString) //My name is Frank, my email is 12345@private-domain-email.com and my phone is 543-555-4432
+const redactedString = redactor.redact(piiString)
+console.log(redactedString); // Hi there my email is axvontx37@idljxyf.com and my phone is 905-003-6053
 
-// Rehydrate a string replacing Mock PII with real PII
-const rehydrated = redactor.refill(redactedString); //My name is Frank, my email is frank@frank.com and my phone is 324-324-4456
-
-
+const rehydrated = redactor.refill(redactedString);
+console.log(rehydrated); // Hi there my email is frank@frank.com and my phone is 324-324-4456
 ```
 
 # Numbers
 
-## Ordinal (th, rd, st)
+## Ordinal (th, rd, nd)
+The `ordinal` function provides a simple way to convert numbers into their ordinal form, such as "1st", "2nd", "3rd", and so on. This utility function ensures that numbers are correctly formatted with their appropriate suffix.
 
 ```js
-import { ordinal } from "happydata-utils"
-ordinal(32) // 32nd
-ordinal(59) // 59th
+import { ordinal } from "happydata-utils";
+
+console.log(ordinal(32)); // 32nd
+console.log(ordinal(59)); // 59th
 ```
 
 ## Parse Number
@@ -105,12 +110,53 @@ import { slugify } from "happydata-utils";
 console.log(slugify('---Hello World---')); // hello-world
 ```
 
+## String to Color
+
+Generate a consistent hex color for a string.
+
+```typescript
+import { stringToColor } from "happydata-utils";
+
+console.log(stringToColor("sameUserName")) // #7d66a1
+console.log(stringToColor("sameUserName")) // #7d66a1
+console.log(stringToColor("sally")) // #cb5a81
+console.log(stringToColor("frank")) // #8d9db9
+console.log(stringToColor("bob")) // #a57e27
+```
+
+## Extract JSON
+
+Sometimes LLMs output JSON wrapped with intro and outro text. This function reliably extracts JSON objects or array from an string of text.
+
+```typescript
+import { extractJSON } from "happydata-utils";
+
+const testString = `Here's some json { "name": "Bob" } \n do you like it?`
+console.log(extractJSON(testString)); // { "name": "Bob" }
+
+const arrayTest = `Here's some json [{ "name": "Bob" },{ "name": "Sally" }] \n do you like it?`
+
+console.log(extractJSON(arrayTest, "array")); // [{ "name": "Bob" },{ "name": "Sally" }]
+```
+
+## Extract URLS
+
+Extract all urls into an array.
+
+```typescript
+import { extractUrls } from "happydata-utils";
+
+const testString = `Want some links? https://google.com http://home.com`;
+
+console.log(extractURLS(testString)); // [ "https://google.com", "http://home.com" ]
+```
+
 ## toCase
 
 Change the casing of a string
 
 ```js
-import { toCase } from 'path/to/your/module';
+import { toCase } from 'happydata-utils';
 
 const titleCase = toCase.title("example_string");
 const snakeCase = toCase.snake("Example String");
@@ -135,7 +181,7 @@ console.log(camelCase);         // Output: "exampleString"
 
 ```
 
-# Random
+# Random Generation
 
 Generate a random number or a random string
 
@@ -159,6 +205,8 @@ Generate a random number or a random string
   import { randomRange } from "happydata-utils";
   console.log(randomRange(1,1000)); // 435
 ```
+
+
 
 # Wait
 
@@ -243,9 +291,9 @@ window.addEventListener('resize', handleResize);
 
 ```
 
-# IS
+# Is...?
 
-Quickly check if a variable is SOMETHING.
+Quickly verify the type of a variable with the `is` utility. This comprehensive set of functions allows you to quickly check if a variable is of a specific type, ensuring your code handles data correctly and efficiently.
 
 ```typescript
 console.log(is.array([])); // true
@@ -291,6 +339,33 @@ console.log(is.finite(100)); // true
 console.log(is.infinite(Infinity)); // true
 console.log(is.Time(new Date())); // true
 
+```
+
+# Browser Only
+
+## Open Email
+
+The `openEmail` function allows you to effortlessly open a new email in the user's default email client. By simply providing the recipient's email address, the subject, and the body of the email, this function streamlines the process of composing and sending emails directly from your application.
+
+```js
+import { openEmail } from "./index";
+
+openEmail({
+  to: "bob@bob.com",
+  subject: "Open this email!",
+  body: "My friend! How are you?"
+});
+```
+
+## Copy to Clipboard
+
+Easily copy text to the user's clipboard using the `copyToClipboard` function. This function takes a string as input and attempts to copy it to the clipboard, returning a boolean value indicating success or failure.
+
+```typescript
+import { copyToClipboard } from "happydata-utils";
+
+const str = `I've been copied! ${new Date().toJSON()}`;
+const copied = copyToClipboard(str); // Returns true if successful, false otherwise
 ```
 
 ## License
