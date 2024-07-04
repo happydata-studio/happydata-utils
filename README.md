@@ -15,33 +15,41 @@ Tools and functions helpful while interacting with an Large Language Model like 
 
 The `Prompt` class provides a straightforward and flexible way to define prompt messages for interaction with OpenAI. This class, along with its derivatives `SystemPrompt`, `AssistantPrompt`, and `UserPrompt`, allows you to construct a variety of prompts, from simple messages to complex multi-line instructions. With built-in support for variables, you can dynamically tailor prompts to fit specific contexts. Whether you're crafting a basic query or a detailed, rule-based prompt, the `Prompt` class streamlines the process, making it easy to send structured messages to OpenAI for chat completions.
 
-```js
+```typescript
 
-import { Prompt, SystemPrompt, AssistantPrompt, UserPrompt } from "happydata-utils";
+import { SystemPrompt, UserPrompt } from "happydata-utils";
+import OpenAI from "openai";
 
+const openai = new OpenAI({
+  apiKey: "sk-4442•••"
+})
+
+let systemPrompt = new SystemPrompt("You're a good joke teller");
+let userPrompt = new UserPrompt("Tell me a joke about {topic}");
+let messages = [systemPrompt, userPrompt.variables({topic: "Coder and the Rabbit"})]
+
+// OpenAI example
+let res = await openai.chat.completions.create({
+  messages: messages,
+  model: "gpt-4o"
+})
+
+console.log(res.choices[0].message.content);
+
+```
+```typescript
 // Basic Example
 let systemPrompt = new SystemPrompt("You're a joke teller");
 let userPrompt = new UserPrompt("Tell me a joke about dogs and cats");
 let messages = [systemPrompt, userPrompt] // pass to chat completion
 
-// Prompt with Variables Example
-let systemPrompt = new SystemPrompt("You're a joke teller");
-let userPrompt = new UserPrompt("Tell me a joke about {topic}");
-let messages = [systemPrompt, userPrompt.variables({topic: "Dogs and Cats"})]
-
 // Multiple line Prompts (using array of string)
-let systemPromptLong = new SystemPrompt([
+let systemPrompt = new SystemPrompt([
   `You're a joke teller.`,
   `Rules:`,
   `- You always talk like an mid-century Englishman`,
   `- You are a fan of the Ghostbusters franchise`,
 ])
-
-// OpenAI example
-let res = await openai.chat.completion.create({
-  messages: messages,
-  moodel: "gpt-4o"
-})
 
 ```
 
